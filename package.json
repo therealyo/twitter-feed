@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon",
     "migrate": "drizzle-kit generate:pg",
-    "build": "tsc --noEmit && esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js",
+    "build": "esbuild src/index.ts --platform=node --target=node18.4 --format=cjs --bundle --minify --main-fields=main --outfile=dist/index.js --external:pg-native",
     "server": "node ./dist/index.js"
   },
   "keywords": [],
@@ -16,6 +16,7 @@
   "dependencies": {
     "@hapi/boom": "^10.0.1",
     "cors": "^2.8.5",
+    "dotenv": "^16.1.4",
     "drizzle-orm": "^0.26.5",
     "drizzle-zod": "^0.4.3",
     "express": "^4.18.2",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",
+    "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.17",
     "@types/node": "^20.2.5",
     "@types/pg": "^8.10.2",

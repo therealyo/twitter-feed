@@ -1,5 +1,7 @@
 import { Pool } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
+import { migrate } from "drizzle-orm/node-postgres/migrator";
+import { config } from "dotenv";
 
 import FeedService from "./services/FeedService";
 
@@ -8,6 +10,8 @@ import FeedController from "./controllers/FeedController";
 import MessageRepository from "./database/repositories/MessageRepository";
 import App from "./App";
 
+config();
+
 const main = async () => {
   try {
     const connectionString = `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`;
@@ -15,8 +19,9 @@ const main = async () => {
       connectionString,
     });
 
-    const db = drizzle(pool);
+    const db = drizzle(pool, { logger: true });
 
+    await migrate(db, { migrationsFolder: "./migrations" });
     const messages = new MessageRepository(db);
 
     const feedService = new FeedService(messages);
