@@ -1,5 +1,4 @@
-import { RequestHandler, Router } from "express";
-import { z } from "zod";
+import { Router } from "express";
 
 abstract class Controller {
   public readonly path: string;
@@ -9,6 +8,8 @@ abstract class Controller {
     this.path = path;
     this.router = Router();
   }
+
+  protected abstract readonly initializeRoutes: () => void;
 }
 
 export default Controller;

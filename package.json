@@ -4,19 +4,28 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon",
+    "migrate": "drizzle-kit generate:pg",
+    "build": "tsc --noEmit && esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js",
+    "server": "node ./dist/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "drizzle-orm": "^0.26.5",
+    "drizzle-zod": "^0.4.3",
     "express": "^4.18.2",
+    "nodemon": "^2.0.22",
     "pg": "^8.11.0",
     "postgres": "^3.3.5",
+    "tsconfig-paths": "^4.2.0",
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
     "@types/node": "^20.2.5",
     "@types/pg": "^8.10.2",
