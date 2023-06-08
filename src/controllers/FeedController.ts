@@ -1,6 +1,14 @@
 import { RequestHandler } from "express";
+
 import Controller from "./Controller";
+
 import FeedService from "@/services/FeedService";
+import {
+  Message,
+  NewMessage,
+  insertMessageSchema,
+} from "@/database/schema/MessageTable";
+import { Boom, badRequest, internal } from "@hapi/boom";
 
 class FeedController extends Controller {
   constructor(private readonly feedService: FeedService) {
@@ -10,23 +18,45 @@ class FeedController extends Controller {
   protected readonly initializeRoutes = () => {
     this.router.get("/", this.getFeed);
 
-    this.router.post("/", this.createMessage);
+    this.router.post(
+      "/",
+      this.validateRequest(insertMessageSchema),
+      this.createMessage
+    );
   };
 
-  private readonly createMessage: RequestHandler<any, any, any, any> = async (
-    req,
-    res
-  ) => {
-    try {
-    } catch (e: unknown) {}
-  };
+  private readonly createMessage: RequestHandler<{}, Message, NewMessage, {}> =
+    async (req, res, next) => {
+      try {
+        const message = req.body;
+
+        const [inserted] = await this.feedService.createMessage(message);
+
+        return res.status(201).json(inserted);
+      } catch (e: unknown) {
+        console.error(e);
+        if (e instanceof Boom) {
+          return next(e);
+        } else if (e instanceof Error) {
+          return next(internal("Something went wrong"));
+        }
+      }
+    };
 
   private readonly getFeed: RequestHandler<any, any, any, any> = async (
     req,
-    res
+    res,
+    next
   ) => {
     try {
-    } catch (e: unknown) {}
+    } catch (e: unknown) {
+      console.error(e);
+      if (e instanceof Boom) {
+        return next(e);
+      } else if (e instanceof Error) {
+        return next(internal("Something went wrong"));
+      }
+    }
   };
 }
 

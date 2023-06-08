@@ -1,4 +1,6 @@
-import { Router } from "express";
+import { RequestHandler, Router } from "express";
+import { ZodTypeAny } from "zod";
+import { badRequest } from "@hapi/boom";
 
 abstract class Controller {
   public readonly path: string;
@@ -10,6 +12,24 @@ abstract class Controller {
   }
 
   protected abstract readonly initializeRoutes: () => void;
+
+  protected readonly validateRequest =
+    (schema: ZodTypeAny): RequestHandler =>
+    async (req, res, next) => {
+      const parsed = schema.safeParse(req.body);
+      if (parsed.success) {
+        return next();
+      } else {
+        return next(
+          badRequest(
+            parsed.error.issues
+              .map(({ path, message }) => `${path.join(".")}: ${message}`)
+              .join("; "),
+            parsed.error.issues
+          )
+        );
+      }
+    };
 }
 
 export default Controller;

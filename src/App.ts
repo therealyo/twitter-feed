@@ -1,7 +1,8 @@
-import express, { Application } from "express";
+import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
 
 import Controller from "./controllers/Controller";
+import { isBoom } from "@hapi/boom";
 
 class App {
   private readonly express: Application;
@@ -34,7 +35,19 @@ class App {
     });
   };
 
-  private readonly initializeErrorHandling = () => {};
+  private readonly initializeErrorHandling = () => {
+    this.express.use(
+      (e: Error, _: Request, res: Response, _2: NextFunction) => {
+        if (e) {
+          const status = isBoom(e) ? e.output.statusCode : 500;
+          const message = isBoom(e)
+            ? e.message
+            : e?.message || "Something went wrong";
+          res.status(status).send(message);
+        }
+      }
+    );
+  };
 
   public readonly listen = () => {
     this.express.listen(this.port, () => {
