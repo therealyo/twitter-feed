@@ -1,5 +1,5 @@
 {
-    "out": "./drizzle",
+    "out": "./migrations",
     "schema": "./src/database/schema",
     "breakpoints": true
 }
