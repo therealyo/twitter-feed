@@ -7,6 +7,10 @@ class FeedService {
   public readonly createMessage = async (message: NewMessage) => {
     return this.messages.createMessage(message);
   };
+
+  public readonly getAll = async () => {
+    return this.messages.getAll();
+  };
 }
 
 export default FeedService;

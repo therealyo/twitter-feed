@@ -8,11 +8,13 @@ import {
   NewMessage,
   insertMessageSchema,
 } from "@/database/schema/MessageTable";
-import { Boom, badRequest, internal } from "@hapi/boom";
+import { Boom, internal } from "@hapi/boom";
 
 class FeedController extends Controller {
   constructor(private readonly feedService: FeedService) {
     super("/feed");
+
+    this.initializeRoutes();
   }
 
   protected readonly initializeRoutes = () => {
@@ -49,6 +51,10 @@ class FeedController extends Controller {
     next
   ) => {
     try {
+      const messages = await this.feedService.getAll();
+      console.log("MESSAGES: ", messages);
+
+      return res.status(200).json(messages);
     } catch (e: unknown) {
       console.error(e);
       if (e instanceof Boom) {

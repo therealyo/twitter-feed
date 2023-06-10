@@ -14,9 +14,11 @@ config();
 
 const main = async () => {
   try {
-    const connectionString = `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`;
+    console.log(process.env);
+    const connectionString = `postgres://${process.env.COCKROACH_USER}:${process.env.COCKROACH_PASSWORD}@${process.env.COCKROACH_HOST}:${process.env.COCKROACH_PORT}/${process.env.COCKROACH_DATABASE}`;
     const pool = new Pool({
       connectionString,
+      ssl: false,
     });
 
     const db = drizzle(pool, { logger: true });

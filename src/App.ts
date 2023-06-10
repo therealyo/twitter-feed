@@ -30,6 +30,9 @@ class App {
   };
 
   private readonly initializeControllers = () => {
+    this.express.get("/health", (req: Request, res: Response) =>
+      res.status(200).send("ok")
+    );
     this.controllers.forEach((controller: Controller) => {
       this.express.use(`${controller.path}`, controller.router);
     });

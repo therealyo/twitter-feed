@@ -7,6 +7,10 @@ class MessageRepository {
   public readonly createMessage = async (message: NewMessage) => {
     return this.db.insert(messagesTable).values(message).returning();
   };
+
+  public readonly getAll = async () => {
+    return this.db.select().from(messagesTable).execute();
+  };
 }
 
 export default MessageRepository;
