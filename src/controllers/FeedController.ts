@@ -1,3 +1,4 @@
+import { config } from "dotenv";
 import { RequestHandler, Response } from "express";
 
 import Controller from "./Controller";
@@ -9,10 +10,11 @@ import {
   insertMessageSchema,
 } from "@/database/schema/MessageTable";
 import { Boom, internal } from "@hapi/boom";
+import { Config } from "@/config/config";
 
 class FeedController extends Controller {
-  constructor(private readonly feedService: FeedService) {
-    super("/feed");
+  constructor(config: Config, private readonly feedService: FeedService) {
+    super("/feed", config);
 
     this.initializeRoutes();
   }
@@ -30,6 +32,7 @@ class FeedController extends Controller {
   private readonly createMessage: RequestHandler<{}, Message, NewMessage, {}> =
     async (req, res, next) => {
       try {
+        console.log(`${new Date()}: `, req.body);
         const message = req.body;
 
         await this.feedService.createMessage(message);
@@ -45,12 +48,13 @@ class FeedController extends Controller {
       }
     };
 
-  private readonly getFeed: RequestHandler<any, any, any, any> = async (
+  private readonly getFeed: RequestHandler<any, Message[], any, any> = async (
     req,
     res,
     next
   ) => {
     try {
+      console.log("Client opened connection");
       res.setHeader("Content-Type", "text/event-stream");
       res.setHeader("Cache-Control", "no-cache");
       res.setHeader("Connection", "keep-alive");
@@ -85,8 +89,6 @@ class FeedController extends Controller {
         res.end();
         console.log("Client closed connection");
       });
-
-      // return res.status(200).json(messages);
     } catch (e: unknown) {
       console.error(e);
       if (e instanceof Boom) {

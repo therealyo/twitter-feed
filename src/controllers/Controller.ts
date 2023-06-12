@@ -1,12 +1,13 @@
 import { RequestHandler, Router } from "express";
 import { ZodTypeAny } from "zod";
 import { badRequest } from "@hapi/boom";
+import { Config } from "@/config/config";
 
 abstract class Controller {
   public readonly path: string;
   public readonly router: Router;
 
-  public constructor(path: string) {
+  public constructor(path: string, protected readonly config: Config) {
     this.path = path;
     this.router = Router();
   }
