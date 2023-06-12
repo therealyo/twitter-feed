@@ -1,6 +1,12 @@
 import { InferModel } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { pgTable, serial, varchar } from "drizzle-orm/pg-core";
+import {
+  bigint,
+  pgTable,
+  serial,
+  timestamp,
+  varchar,
+} from "drizzle-orm/pg-core";
 
 export type Message = InferModel<typeof messagesTable, "select">;
 export type NewMessage = InferModel<typeof messagesTable, "insert">;
@@ -8,6 +14,7 @@ export type NewMessage = InferModel<typeof messagesTable, "insert">;
 const messagesTable = pgTable("messages_table", {
   id: serial("id").primaryKey(),
   text: varchar("text").notNull(),
+  created: timestamp("created_at").defaultNow(),
 });
 
 export const selectMessageSchema = createSelectSchema(messagesTable);

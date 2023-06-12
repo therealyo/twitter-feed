@@ -1,4 +1,4 @@
-import { RequestHandler } from "express";
+import { RequestHandler, Response } from "express";
 
 import Controller from "./Controller";
 
@@ -32,9 +32,9 @@ class FeedController extends Controller {
       try {
         const message = req.body;
 
-        const [inserted] = await this.feedService.createMessage(message);
+        await this.feedService.createMessage(message);
 
-        return res.status(201).json(inserted);
+        return res.sendStatus(201);
       } catch (e: unknown) {
         console.error(e);
         if (e instanceof Boom) {
@@ -51,10 +51,42 @@ class FeedController extends Controller {
     next
   ) => {
     try {
-      const messages = await this.feedService.getAll();
-      console.log("MESSAGES: ", messages);
+      res.setHeader("Content-Type", "text/event-stream");
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("Connection", "keep-alive");
+      res.setHeader("Transfer-Encoding", "chunked");
 
-      return res.status(200).json(messages);
+      const messages = await this.feedService.getAll();
+
+      messages.forEach((message) => {
+        const json = JSON.stringify(message);
+        res.write(json + "\n");
+      });
+
+      let lastCheck = new Date();
+      const sendUpdates = async () => {
+        const now = new Date();
+        const result = await this.feedService.getMessagesSince(lastCheck);
+
+        if (result.length > 0) {
+          result.forEach((message) => {
+            const json = JSON.stringify(message);
+            res.write(json + "\n");
+          });
+        }
+
+        lastCheck = now;
+      };
+
+      const update = setInterval(sendUpdates, 1000);
+
+      res.on("close", () => {
+        clearInterval(update);
+        res.end();
+        console.log("Client closed connection");
+      });
+
+      // return res.status(200).json(messages);
     } catch (e: unknown) {
       console.error(e);
       if (e instanceof Boom) {

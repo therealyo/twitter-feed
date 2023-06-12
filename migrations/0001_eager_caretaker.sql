@@ -1,0 +1,1 @@
+ALTER TABLE "messages_table" ADD COLUMN "created_at" timestamp DEFAULT now();

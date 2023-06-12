@@ -1,42 +1,53 @@
 import { Pool } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
-import { config } from "dotenv";
+
+import { Kafka } from "kafkajs";
 
 import FeedService from "./services/FeedService";
 
 import FeedController from "./controllers/FeedController";
 
 import MessageRepository from "./database/repositories/MessageRepository";
-import App from "./App";
+import MessagingFactory from "./pubsub/Messages";
 
-config();
+import App from "./App";
+import load from "./config/config";
+
+const config = load();
 
 const main = async () => {
   try {
-    console.log(process.env);
-    const connectionString = `postgres://${process.env.COCKROACH_USER}:${process.env.COCKROACH_PASSWORD}@${process.env.COCKROACH_HOST}:${process.env.COCKROACH_PORT}/${process.env.COCKROACH_DATABASE}`;
     const pool = new Pool({
-      connectionString,
+      connectionString: config.connectionString,
       ssl: false,
     });
 
     const db = drizzle(pool, { logger: true });
 
     await migrate(db, { migrationsFolder: "./migrations" });
-    const messages = new MessageRepository(db);
 
-    const feedService = new FeedService(messages);
+    const kafka = new Kafka({ clientId: "app", brokers: ["kafka:9092"] });
+
+    const [messagePub, messageSub] = await Promise.all([
+      MessagingFactory.createMessagePublisher(kafka, config),
+      MessagingFactory.createMessageConsumer(kafka, config),
+    ]);
+
+    const messages = new MessageRepository(db, messageSub);
+
+    const feedService = new FeedService(messages, messagePub);
 
     const feedController = new FeedController(feedService);
 
-    const port = process.env.PORT || 5000;
+    const port = config.port;
     const controllers = [feedController];
     const app = new App(port, controllers);
 
     app.listen();
     return app;
   } catch (e: unknown) {
+    console.log("here");
     if (e instanceof Error) {
       console.error(e.message);
       process.exit(1);

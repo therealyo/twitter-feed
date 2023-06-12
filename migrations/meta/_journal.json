@@ -8,6 +8,13 @@
       "when": 1686249101261,
       "tag": "0000_yielding_runaways",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1686547699319,
+      "tag": "0001_eager_caretaker",
+      "breakpoints": true
     }
   ]
 }
