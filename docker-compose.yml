@@ -6,7 +6,7 @@ services:
     container_name: cockroach-node-1
     command: start --insecure --advertise-addr=cockroach-node-1 --join=cockroach-node-1
     volumes:
-      - cockroach-node-1:/cockroach-data
+      - cockroach-node-1:/cockroach/cockroach-data
     ports:
       - 26257:26257
       - 8080:8080
@@ -18,7 +18,7 @@ services:
     container_name: cockroach-node-2
     command: start --insecure --advertise-addr=cockroach-node-2 --join=cockroach-node-1:26257
     volumes:
-      - cockroach-node-2:/cockroach-data
+      - cockroach-node-2:/cockroach/cockroach-data
     networks:
       - app-network
 
