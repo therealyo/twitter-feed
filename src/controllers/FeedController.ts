@@ -1,5 +1,5 @@
-import { config } from "dotenv";
-import { RequestHandler, Response } from "express";
+import { RequestHandler } from "express";
+import { Boom, internal } from "@hapi/boom";
 
 import Controller from "./Controller";
 
@@ -9,7 +9,6 @@ import {
   NewMessage,
   insertMessageSchema,
 } from "@/database/schema/MessageTable";
-import { Boom, internal } from "@hapi/boom";
 import { Config } from "@/config/config";
 
 class FeedController extends Controller {
@@ -48,7 +47,7 @@ class FeedController extends Controller {
       }
     };
 
-  private readonly getFeed: RequestHandler<any, Message[], any, any> = async (
+  private readonly getFeed: RequestHandler<{}, Message[], {}, {}> = async (
     req,
     res,
     next

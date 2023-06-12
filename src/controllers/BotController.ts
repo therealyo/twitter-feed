@@ -1,8 +1,8 @@
 import autocannon from "autocannon";
-import { RequestHandler, Response } from "express";
+import { RequestHandler } from "express";
+import { Boom, internal } from "@hapi/boom";
 
 import Controller from "./Controller";
-import { Boom, internal } from "@hapi/boom";
 import { Config } from "@/config/config";
 
 class BotController extends Controller {

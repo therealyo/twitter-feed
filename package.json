@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon",
     "migrate": "drizzle-kit generate:pg",
     "build": "esbuild src/index.ts --platform=node --target=node18.4 --format=cjs --bundle --minify --main-fields=main --outfile=dist/index.js --external:pg-native",

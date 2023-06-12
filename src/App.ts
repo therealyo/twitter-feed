@@ -1,8 +1,8 @@
 import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
+import { isBoom } from "@hapi/boom";
 
 import Controller from "./controllers/Controller";
-import { isBoom } from "@hapi/boom";
 
 class App {
   private readonly express: Application;

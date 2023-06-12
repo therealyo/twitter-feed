@@ -14,16 +14,14 @@ export class MessagePublisher {
   };
 
   public publish = async (message: any) => {
-    return this.producer
-      .send({
-        topic: this.config.feedTopic,
-        messages: [
-          {
-            value: JSON.stringify(message),
-          },
-        ],
-      })
-      .catch((e) => console.log(e));
+    return this.producer.send({
+      topic: this.config.feedTopic,
+      messages: [
+        {
+          value: JSON.stringify(message),
+        },
+      ],
+    });
   };
 
   public disconnect = async () => {
