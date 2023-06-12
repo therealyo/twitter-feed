@@ -6,9 +6,20 @@ export interface Config {
 }
 
 const load = (): Config => {
+  const {
+    COCKROACH_USER = "root",
+    COCKROACH_PASSWORD = "",
+    COCKROACH_HOST = "cockroach-node-1",
+    COCKROACH_PORT = 26257,
+    COCKROACH_DATABASE = "postgres",
+    PORT = 5000,
+  } = process.env;
+
+  const connectionString = `postgres://${COCKROACH_USER}:${COCKROACH_PASSWORD}@${COCKROACH_HOST}:${COCKROACH_PORT}/${COCKROACH_DATABASE}`;
+
   return {
-    port: process.env.PORT || 5000,
-    connectionString: `postgres://${process.env.COCKROACH_USER}:${process.env.COCKROACH_PASSWORD}@${process.env.COCKROACH_HOST}:${process.env.COCKROACH_PORT}/${process.env.COCKROACH_DATABASE}`,
+    port: PORT,
+    connectionString,
     feedGroupId: "twitter-feed",
     feedTopic: "feed",
   };
