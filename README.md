@@ -4,7 +4,7 @@
 
 ## Overview
 
-This project
+This project contains simulation of twitter feed using http streaming to send existing messages and write newly created ones.
 
 ## Starting the Project
 
